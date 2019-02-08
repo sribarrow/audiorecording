@@ -39,7 +39,8 @@ h2 {
 
 canvas {
     display: block;
-    margin-bottom: 0.5rem;
+    /* margin-bottom: 0.5rem; */
+    border: 1px solid black;
 }
 
 #buttons {
@@ -93,9 +94,15 @@ button:active {
    * also show a scrollbar when there are too many clips to show
    * in the available space */
 
-.sound-clips {
+.sound-clips,
+#stopWatch {
     flex: 1;
     overflow: auto;
+    font-size: 1.5rem;
+}
+
+#time {
+    color: red;
 }
 
 section,
