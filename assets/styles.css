@@ -33,13 +33,17 @@ h2 {
     padding: 0.5rem 0 0 0;
 }
 
+h4 {
+    color: rgb(57, 12, 219);
+}
+
 .main-controls {
     padding: 0.5rem 0;
 }
 
 canvas {
     display: block;
-    /* margin-bottom: 0.5rem; */
+    margin-bottom: 0.9rem;
     border: 1px solid black;
 }
 
@@ -94,8 +98,7 @@ button:active {
    * also show a scrollbar when there are too many clips to show
    * in the available space */
 
-.sound-clips,
-#stopWatch {
+.sound-clips {
     flex: 1;
     overflow: auto;
     font-size: 1.5rem;
@@ -103,6 +106,7 @@ button:active {
 
 #time {
     color: red;
+    font-size: bold;
 }
 
 section,

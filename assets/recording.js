@@ -4,6 +4,8 @@ var record = document.querySelector('.record');
 var stop = document.querySelector('.stop');
 var soundClips = document.querySelector('.sound-clips');
 var canvas = document.querySelector('.visualizer');
+var wave = document.querySelector('.wave');
+var spectro = document.querySelector('.spectro');
 var mainSection = document.querySelector('.main-controls');
 
 // disable stop button while not recording
@@ -15,6 +17,7 @@ stop.disabled = true;
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 //var audioCtx = new AudioContext();
 var audioCtx, analyser;
+var spectro;
 var dataArray;
 var time = document.querySelector('#time');
 //console.log(time.innerHTML);
@@ -141,14 +144,13 @@ function visualize(stream) {
     audioCtx = new AudioContext();
     var source = audioCtx.createMediaStreamSource(stream);
     analyser = audioCtx.createAnalyser();
-    analyser.minDecibels = -70;
-    analyser.maxDecibels = -10;
+    // analyser.minDecibels = -70;
+    //  analyser.maxDecibels = -10;
     analyser.smoothingTimeConstant = 0.95;
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
     draw();
 }
-
 
 function draw() {
     WIDTH = canvas.width
@@ -176,8 +178,12 @@ function draw() {
 
 }
 
+
+
 window.onresize = function() {
     canvas.width = mainSection.offsetWidth;
+    wave.width = mainSection.offsetWidth;
+    spectro.width = mainSection.offsetWidth;
 }
 
 window.onresize()

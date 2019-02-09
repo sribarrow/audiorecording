@@ -18,27 +18,30 @@
             </header>
 
             <section class="main-controls">
-                <canvas class="visualizer" height="60px"></canvas>
+                <h4>Equalizer</h4>
+                <canvas class="visualizer" height="150px"></canvas>
                 <div id="buttons">
                     <button class="record">Record</button>
                     <button class="stop">Stop</button>
                 </div>
-            </section>
-
-            <section id="stopWatch">
-                <div>
+                <div id="message">
                     Recording time left: <span id="time">40:00</span> seconds!
                 </div>
             </section>
-
             <section class="sound-clips">
 
-
             </section>
+
+            <section class="graph">
+                <h4>FFT Wave</h4>
+                <canvas class="wave" height="100"></canvas>
+                <h4>Spectogram</h4>
+                <canvas class="spectro" height="300px"></canvas>
+            </section>
+
             <footer>
                 <p>Recorder from https://github.com/mdn/web-dictaphone/ </p>
             </footer>
-
         </div>
     </div>
     <!-- Below is your custom application script -->
