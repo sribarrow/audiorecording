@@ -43,8 +43,13 @@ h4 {
 
 canvas {
     display: block;
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.9rem auto;
     border: 1px solid black;
+}
+
+footer {
+    text-align: center;
+    margin: 10px;
 }
 
 #buttons {
