@@ -18,14 +18,15 @@ stop.disabled = true;
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 //var audioCtx = new AudioContext();
 var audioCtx, analyser;
-var spectro;
-var dataArray;
+var audioCtxW, analyserW;
+var dataArray, dataArrayW;
 var time = document.querySelector('#time');
 //console.log(time.innerHTML);
 var timer, seconds;
 //seconds = 40;
 
 var canvasCtx = canvas.getContext("2d");
+var canvasCtxW = wave.getContext("2d");
 //var analyser = audioCtx.createAnalyser();
 // check if getUserMedia is available in the browser
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -156,7 +157,7 @@ function visualize(stream) {
     analyser = audioCtx.createAnalyser();
     // analyser.minDecibels = -70;
     //  analyser.maxDecibels = -10;
-    analyser.smoothingTimeConstant = 0.95;
+    analyser.smoothingTimeConstant = 0.7;
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
     draw();
@@ -178,7 +179,7 @@ function draw() {
     var barHeight;
     var x = 0;
     for (var i = 0; i < bufferLength; i++) {
-        barHeight = dataArray[i] * .85;
+        barHeight = dataArray[i] /2;
 
         canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
         canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
