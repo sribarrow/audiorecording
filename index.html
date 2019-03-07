@@ -7,6 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link type="text/css" rel="stylesheet" href="/assets/css/styles.css">
+
 </head>
 
 <body>
@@ -24,8 +25,11 @@
                     <button class="record">Record</button>
                     <button class="stop">Stop</button>
                 </div>
-                <div id="message">
+                <div id="message" align="center">
                     Recording time left: <span id="time">40:00</span> seconds!
+                </div>
+                <div id="progress" align="center">0% complete</div>
+                <div id="box" style="background: #eee; font-size: 26px; width: 450px; height: 30px; margin: 0 auto; text-align: center;">
                 </div>
             </section>
             <section class="sound-clips">
@@ -46,8 +50,9 @@
             </footer>
         </div>
     </div>
-    <!-- Below is your custom application script -->
-    <script src="assets/js/recording.js"></script>
+    <!-- Below is your custom application script -->  
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script> 
+    <script type="text/javascript" src="assets/js/binary.js"></script>   
+    <script type="text/javascript" src="assets/js/recording.js"></script>   
 </body>
-
 </html>
