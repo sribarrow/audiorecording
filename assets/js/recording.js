@@ -12,7 +12,9 @@ var record = document.querySelector('.record');
 var stop = document.querySelector('.stop');
 //audio variables
 var audioContext, audioInput, analyser;
-
+// boolean
+var bRecording = false;
+var client = new BinaryClient('wss://localhost:9001');
 var session = {
     audio: true,
     video: false
@@ -50,18 +52,19 @@ var session = {
     //recorder.connect(audioContext.destination);
     recorder.connect(audioContext.destination);
     record.onclick = function() {
-        mediaRecorder.start();
-        seconds = 40;
-        console.log(mediaRecorder.state);
-        record.disabled = true;
-        stop.disabled = false;
-        record.disabled = true;
-        timer = setInterval(myTimer, 1000);
-        client = new BinaryClient('wss://localhost:9001');
-        client.on('open', function () {
-            console.log('connection to server made...');
-        });
-
+        if(mediaRecorder.state === 'recording'){
+            return;
+        } else{
+            mediaRecorder.start();
+            seconds = 40;
+            console.log(mediaRecorder.state);
+            record.disabled = true;
+            stop.disabled = false;
+            record.disabled = true;
+            //record.addClass('disabled');
+            timer = setInterval(myTimer, 1000);
+            bRecording = true
+        }   
     }
 
     function myTimer() {
@@ -73,16 +76,18 @@ var session = {
     }
 
     stop.onclick = function() {
-        console.log(mediaRecorder.state==='inactive');
-        if (mediaRecorder.state==='active') {
+        //console.log(mediaRecorder.state==='inactive');
+        if (mediaRecorder.state==='inactive') {
+            console.log('Recorder is inactive..');
+        } else {
             mediaRecorder.stop;
-        seconds = 0;
-        clearInterval(timer);
-        console.log(mediaRecorder.state);
-        //console.log("recorder stopped");
-        stop.disabled = true;
-        record.disabled = false;
-        closeAll;
+            seconds = 0;
+            clearInterval(timer);
+            console.log(mediaRecorder.state);
+            //console.log("recorder stopped");
+            stop.disabled = true;
+            record.disabled = false;
+            bRecording = false;
         }
     }
 
@@ -94,6 +99,9 @@ var session = {
     spectro.width=mainSection.offsetWidth;
 
     console.log('audio streaming...');
+    if(bRecording){
+        console.log('Recording now...');
+    }
     var bufferLength = analyser.frequencyBinCount;
     var dataArray = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(dataArray);
@@ -112,14 +120,6 @@ var session = {
         x += barWidth + 1;
     }
   }
-
-  function closeAll(){
-    console.log('close');
-    if(mediaRecorder)
-        mediaRecorder.close;
-    if(client)
-        client.close();
-}
 
   function convertFloat32ToInt16(buffer) {
     l = buffer.length;

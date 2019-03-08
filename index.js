@@ -1,6 +1,6 @@
 var express = require('express');
 var https = require('https');
-var BinaryServer = require('binaryjs').BinaryServer;
+var binaryServer = require('binaryjs').BinaryServer;
 var fs = require('fs');
 var wav = require('wav');
 var outFile;
@@ -9,7 +9,7 @@ var outFile;
 var app = express();
 // port our node JS will listen into
 var port = 3000;
-var wsport = 9001;
+//var wsport = 9001;
 app.use('/assets', express.static('./assets/'));
 //routing
 app.get('/', function(req, res) {
@@ -20,19 +20,27 @@ app.get('/', function(req, res) {
 app.listen(port);
 
 var options = {
+    port: 9001,
     key:    fs.readFileSync('./assets/ssl/localhost.key'),
     cert:   fs.readFileSync('./assets/ssl/localhost.crt'),
+    ca:     fs.readFileSync('./assets/ssl/private.pem'),
+    requestCert: false,
+    rejectUnauthorized: true
 };
 
 if(!fs.existsSync("./assets/audio"))
     fs.mkdirSync("./assets/audio");
 
-var server = https.createServer(options,app);
-server.listen(wsport);
+var httpsServer = https.createServer(options,app).listen(options.port, function(req,res){
+    console.log('HTTPS audio streaming connected on port ' + options.port);
+});
+
 
 //var binaryServer = new BinaryServer({port: 9001});
 
-server.on('connection', function(client) {
+var binaryServer = new binaryServer({server:httpsServer});
+
+binaryServer.on('connection', function(client) {
     console.log("new connection...");
     var fileWriter = null;
     var writeStream = null;
