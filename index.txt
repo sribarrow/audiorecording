@@ -1,7 +1,6 @@
 var express = require('express');
-var https = require('https')
+var https = require('https');
 var binaryServer = require('binaryjs').BinaryServer;
-var opener = require('opener');
 var fs = require('fs');
 var wav = require('wav');
 var outFile;
@@ -22,40 +21,44 @@ app.listen(port);
 var options = {
     port: 9001,
     key:    fs.readFileSync('./assets/ssl/localhost.key'),
-    cert:   fs.readFileSync('./assets/ssl/localhost.crt')
+    cert:   fs.readFileSync('./assets/ssl/localhost.crt'),
+    ca:     fs.readFileSync('./assets/ssl/private.pem'),
+    requestCert: true,
+    rejectUnauthorized: true
 };
 
 if(!fs.existsSync("./assets/audio"))
     fs.mkdirSync("./assets/audio");
 
-    var server = https.createServer(options,app);
-    server.listen(9001);
 
-   // opener("https://localhost:9001");
 
- var server = binaryServer({server:server});
+var httpsServer = https.createServer(options,app).listen(options.port, function(req,res){
+    console.log('HTTPS audio streaming connected on port ' + options.port);
+});
 
- server.on('connection', function(client) {
+
+// var binaryServer = new BinaryServer({port: 9001});
+
+var binaryServer = new binaryServer({server:httpsServer});
+
+binaryServer.on('connection', function(client) {
     console.log("new connection...");
     var fileWriter = null;
     var writeStream = null;
 
-
-    client.on('stream', function(stream, meta) {
-
+    client.on('stream', function(steam, meta){
         console.log("Stream Start@" + meta.sampleRate +"Hz");
-        var fileName = "./assets/audio/"+ meta.name +"_"+ new Date().getTime();
-        console.log(fileName);
-        
-        
+        var fileName = "recordings/"+ meta.name +"-"+ new Date().getTime();
+
         fileWriter = new wav.FileWriter(fileName + ".wav", {
             channels: 1,
             sampleRate: meta.sampleRate,
             bitDepth: 16 });
+        
         stream.pipe(fileWriter);
+
     });
 
-    
     client.on('close', function() {
         if ( fileWriter != null ) {
             fileWriter.end();
@@ -64,4 +67,5 @@ if(!fs.existsSync("./assets/audio"))
         }
         console.log("Connection Closed");
     });
+
 });

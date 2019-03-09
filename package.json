@@ -11,6 +11,8 @@
     "dependencies": {
         "binaryjs": "^0.2.1",
         "express": "^4.16.4",
+        "opener": "^1.5.1",
+        "socket.io-stream": "^0.9.1",
         "wav": "^1.0.2"
     }
 }

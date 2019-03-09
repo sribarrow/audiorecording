@@ -12,9 +12,10 @@ var record = document.querySelector('.record');
 var stop = document.querySelector('.stop');
 //audio variables
 var audioContext, audioInput, analyser;
+var resampleRate, worker, bStream, client, recorder;
 // boolean
 var bRecording = false;
-var client = new BinaryClient('wss://localhost:9001');
+
 var session = {
     audio: true,
     video: false
@@ -32,11 +33,23 @@ var session = {
     console.log('accessing microphone...');
     var mediaRecorder = new MediaRecorder(stream);
     audioContext = new AudioContext();
+    
+    var contextSampleRate = audioContext.sampleRate;
+        resampleRate = contextSampleRate,
+        worker = new Worker('/assets/js/worker/resampler-worker.js');
+
+    worker.postMessage({cmd:"init",from:contextSampleRate,to:resampleRate});
+
+    worker.addEventListener('message', function (e) {
+        if (bStream && bStream.writable)
+            bStream.write(convertFloat32ToInt16(e.data.buffer));
+    }, false);
+
     audioInput = audioContext.createMediaStreamSource(stream);
     analyser = audioContext.createAnalyser();
     var bufferSize = 2048;
     // create a javascript node
-    var recorder = audioContext.createScriptProcessor(bufferSize, 1, 1);
+    recorder = audioContext.createScriptProcessor(bufferSize, 1, 1);
 
     analyser.smoothingTimeConstant = 0.3;
     analyser.fftSize = 1024;
@@ -56,6 +69,7 @@ var session = {
             return;
         } else{
             mediaRecorder.start();
+            close();
             seconds = 40;
             console.log(mediaRecorder.state);
             record.disabled = true;
@@ -63,6 +77,11 @@ var session = {
             record.disabled = true;
             //record.addClass('disabled');
             timer = setInterval(myTimer, 1000);
+            client = new BinaryClient('wss://localhost:9001');
+                client.on('open', function () {
+                bStream = client.createStream({sampleRate: resampleRate
+                });
+            });
             bRecording = true
         }   
     }
@@ -84,6 +103,7 @@ var session = {
             seconds = 0;
             clearInterval(timer);
             console.log(mediaRecorder.state);
+            close();
             //console.log("recorder stopped");
             stop.disabled = true;
             record.disabled = false;
@@ -97,6 +117,10 @@ var session = {
     canvas.width = mainSection.offsetWidth;
     wave.width = mainSection.offsetWidth;
     spectro.width=mainSection.offsetWidth;
+
+    var left = e.inputBuffer.getChannelData(0);
+
+    worker.postMessage({cmd: "resample", buffer: left});
 
     console.log('audio streaming...');
     if(bRecording){
@@ -129,6 +153,14 @@ var session = {
     }
     return buf.buffer;
   }
+
+  function close(){
+    console.log('close');
+    if(recorder)
+        recorder.disconnect();
+    if(client)
+        client.close();
+}
 
   function onError(err) {
     console.log('The following error occured: ' + err);
