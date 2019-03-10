@@ -37,13 +37,14 @@ var session = {
     var contextSampleRate = audioContext.sampleRate;
         resampleRate = contextSampleRate,
         worker = new Worker('/assets/js/worker/resampler-worker.js');
+        console.log(`Original sample rate:${contextSampleRate} , Resample Rate:${resampleRate}`);
 
-    worker.postMessage({cmd:"init",from:contextSampleRate,to:resampleRate});
+    // worker.postMessage({cmd:"init",from:contextSampleRate,to:resampleRate});
 
-    worker.addEventListener('message', function (e) {
-        if (bStream && bStream.writable)
-            bStream.write(convertFloat32ToInt16(e.data.buffer));
-    }, false);
+    // worker.addEventListener('message', function (e) {
+    //     if (bStream && bStream.writable)
+    //         bStream.write(convertFloat32ToInt16(e.data.buffer));
+    // }, false);
 
     audioInput = audioContext.createMediaStreamSource(stream);
     analyser = audioContext.createAnalyser();
@@ -120,11 +121,14 @@ var session = {
 
     var left = e.inputBuffer.getChannelData(0);
 
-    worker.postMessage({cmd: "resample", buffer: left});
+    //worker.postMessage({cmd: "resample", buffer: left});
 
     console.log('audio streaming...');
     if(bRecording){
         console.log('Recording now...');
+        if (bStream && bStream.writable){
+            bStream.write(convertFloat32ToInt16(left));
+        } 
     }
     var bufferLength = analyser.frequencyBinCount;
     var dataArray = new Uint8Array(analyser.frequencyBinCount);
@@ -156,8 +160,6 @@ var session = {
 
   function close(){
     console.log('close');
-    if(recorder)
-        recorder.disconnect();
     if(client)
         client.close();
 }

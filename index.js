@@ -29,7 +29,7 @@ if(!fs.existsSync("./assets/audio"))
     fs.mkdirSync("./assets/audio");
 
     var server = https.createServer(options,app);
-    server.listen(9001);
+    server.listen(options.port);
 
    // opener("https://localhost:9001");
 
@@ -40,21 +40,18 @@ if(!fs.existsSync("./assets/audio"))
     var fileWriter = null;
     var writeStream = null;
 
-
     client.on('stream', function(stream, meta) {
 
         console.log("Stream Start@" + meta.sampleRate +"Hz");
         var fileName = "./assets/audio/"+ meta.name +"_"+ new Date().getTime();
         console.log(fileName);
-        
-        
+              
         fileWriter = new wav.FileWriter(fileName + ".wav", {
             channels: 1,
             sampleRate: meta.sampleRate,
-            bitDepth: 16 });
+            bitDepth: 32 });
         stream.pipe(fileWriter);
     });
-
     
     client.on('close', function() {
         if ( fileWriter != null ) {
