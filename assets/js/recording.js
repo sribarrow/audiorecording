@@ -12,7 +12,8 @@ var record = document.querySelector('.record');
 var stop = document.querySelector('.stop');
 //audio variables
 var audioContext, audioInput, analyser;
-var resampleRate, worker, bStream, client, recorder;
+//resampleRate, worker,
+var  bStream, client, recorder;
 // boolean
 var bRecording = false;
 
@@ -35,9 +36,9 @@ var session = {
     audioContext = new AudioContext();
     
     var contextSampleRate = audioContext.sampleRate;
-        resampleRate = contextSampleRate,
-        worker = new Worker('/assets/js/worker/resampler-worker.js');
-        console.log(`Original sample rate:${contextSampleRate} , Resample Rate:${resampleRate}`);
+        //resampleRate = contextSampleRate,
+        //worker = new Worker('/assets/js/worker/resampler-worker.js');
+        console.log(`Original sample rate:${contextSampleRate}`);
 
     // worker.postMessage({cmd:"init",from:contextSampleRate,to:resampleRate});
 
@@ -66,25 +67,24 @@ var session = {
     //recorder.connect(audioContext.destination);
     recorder.connect(audioContext.destination);
     record.onclick = function() {
+        console.log(mediaRecorder.state);
         if(mediaRecorder.state === 'recording'){
-            return;
-        } else{
-            mediaRecorder.start();
-            close();
-            seconds = 40;
-            console.log(mediaRecorder.state);
-            record.disabled = true;
-            stop.disabled = false;
-            record.disabled = true;
-            //record.addClass('disabled');
-            timer = setInterval(myTimer, 1000);
-            client = new BinaryClient('wss://localhost:9001');
-                client.on('open', function () {
-                bStream = client.createStream({sampleRate: resampleRate
-                });
+            mediaRecorder.stop;
+        } 
+        mediaRecorder.start();
+        seconds = 40;
+        record.disabled = true;
+        stop.disabled = false;
+        record.disabled = true;
+        //record.addClass('disabled');
+        timer = setInterval(myTimer, 1000);
+        client = new BinaryClient('wss://localhost:9001');
+            client.on('open', function () {
+            bStream = client.createStream({sampleRate: contextSampleRate
             });
-            bRecording = true
-        }   
+        });
+        bRecording = true
+        
     }
 
     function myTimer() {
@@ -97,13 +97,12 @@ var session = {
 
     stop.onclick = function() {
         //console.log(mediaRecorder.state==='inactive');
-        if (mediaRecorder.state==='inactive') {
-            console.log('Recorder is inactive..');
-        } else {
-            mediaRecorder.stop;
+        if (mediaRecorder.state==='recording') {
+            mediaRecorder.stop();
+            console.log(mediaRecorder.state);
             seconds = 0;
             clearInterval(timer);
-            console.log(mediaRecorder.state);
+            console.log('Timer reset...');
             close();
             //console.log("recorder stopped");
             stop.disabled = true;
