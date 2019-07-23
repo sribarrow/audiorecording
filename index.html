@@ -19,8 +19,13 @@
             </header>
 
             <section class="main-controls">
-                <h4>Equalizer</h4>
+                <h4>Spectrum Analyser</h4>
                 <canvas class="visualizer" height="150px"></canvas>
+                <div id="file">
+                    <label for="filename">Enter filename:</label>
+                    <input id="filename" type="text">
+                </div>
+                
                 <div id="buttons">
                     <button class="record">Record</button>
                     <button class="stop">Stop</button>
@@ -28,25 +33,17 @@
                 <div id="message" align="center">
                     Recording time left: <span id="time">40:00</span> seconds!
                 </div>
-                <div id="progress" align="center">0% complete</div>
-                <div id="box" style="background: #eee; font-size: 26px; width: 450px; height: 30px; margin: 0 auto; text-align: center;">
-                </div>
+                <br />
+                <div> <a href="spectro.html">View Spectrogram</a></div>
+                <br />
             </section>
-            <section class="sound-clips">
-
-            </section>
-
             <section class="graph">
-                <h4>FFT Wave</h4>
+                <h4>Waveform/Oscilloscope</h4>
                 <canvas class="wave" height="100"></canvas>
-                <h4>Spectogram</h4>
-                <canvas class="spectro" height="300px"></canvas>
             </section>
-
             <footer>
-                <p>Recorder based on MDN code for https://github.com/mdn/web-dictaphone/ </p>
-                <p> copyright sbarrow &copy;2019 </p>
-
+                <p>Recorder modelled based on MDN code for https://github.com/mdn/web-dictaphone/ </p>
+                <p> copyright sbarrow compiled for Masters dissertation &copy;2018</p>
             </footer>
         </div>
     </div>
@@ -55,8 +52,7 @@
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/binaryjs/0.2.1/binary.min.js"></script>  -->
     <script type="text/javascript"  src="/assets/js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="/assets/js/binary.js"></script>   
-    <script type="text/javascript" src="/assets/js/binary.js"></script>   
     <script type="text/javascript" src="/assets/js/re-sampler.js"></script>
-    <script type="text/javascript" src="/assets/js/recording.js"></script>   
+    <script type="text/javascript" src="/assets/js/recording.js"></script>  
 </body>
 </html>

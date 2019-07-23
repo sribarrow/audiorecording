@@ -10,6 +10,7 @@
     "license": "ISC",
     "dependencies": {
         "binaryjs": "^0.2.1",
+        "chroma-js": "^2.0.4",
         "express": "^4.16.4",
         "opener": "^1.5.1",
         "socket.io-stream": "^0.9.1",

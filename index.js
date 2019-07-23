@@ -1,21 +1,28 @@
-var express = require('express');
-var https = require('https')
-var binaryServer = require('binaryjs').BinaryServer;
-var opener = require('opener');
-var fs = require('fs');
-var wav = require('wav');
-var outFile;
+let express = require('express');
+let https = require('https');
+let binaryServer = require('binaryjs').BinaryServer;
+let opener = require('opener');
+let fs = require('fs');
+let wav = require('wav');
+let outFile;
 
 // set the app to access all express variables
-var app = express();
+let app = express();
 // port our node JS will listen into
-var port = 3000;
+let port = 3000;
 //var wsport = 9001;
 app.use('/assets', express.static('./assets/'));
 //routing
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
+
+app.get('/spectro.html', function(req, res) {
+    res.sendFile(__dirname + '/spectro.html');
+});
+
+//app.get('');
+
 // set the app to listen to the port.
 app.listen(port);
 
@@ -28,12 +35,12 @@ var options = {
 if(!fs.existsSync("./assets/audio"))
     fs.mkdirSync("./assets/audio");
 
-    var server = https.createServer(options,app);
-    server.listen(options.port);
-
+    var httpServer = https.createServer(options,app);
+    httpServer.listen(options.port);
+    
    // opener("https://localhost:9001");
 
- var server = binaryServer({server:server});
+ var server = binaryServer({server:httpServer});
 
  server.on('connection', function(client) {
     console.log("new connection...");
@@ -43,8 +50,9 @@ if(!fs.existsSync("./assets/audio"))
     client.on('stream', function(stream, meta) {
 
         console.log("Stream Start@" + meta.sampleRate +"Hz");
-        var fileName = "./assets/audio/"+ meta.name +"_"+ new Date().getTime();
-        console.log(fileName);
+        console.log("Writing to file " + meta.fname+"_"+ new Date().getTime());
+        var fileName = "./assets/audio/"+ meta.fname +"_"+ new Date().getTime();
+        //console.log(fileName);
               
         fileWriter = new wav.FileWriter(fileName + ".wav", {
             channels: 1,

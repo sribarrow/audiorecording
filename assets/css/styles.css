@@ -58,6 +58,20 @@ footer {
     justify-content: space-between;
     margin: 25px;
 }
+#file{
+    display:flex;
+    flex-direction: row;
+    margin:25px;
+}
+
+input[type="text"] {
+    width: 150px;
+    height: 25px;
+    display: block;
+    margin-bottom: 10px;
+    margin-left:5px;
+    background-color: pink;
+  }
 
 #buttons button {
     font-size: 1rem;

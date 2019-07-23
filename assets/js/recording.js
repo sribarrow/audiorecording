@@ -1,23 +1,30 @@
 //canvas
-var canvas = document.querySelector('.visualizer');
-var canvasCtx = canvas.getContext("2d");
+let canvas = document.querySelector('.visualizer');
+let canvasCtx = canvas.getContext("2d");
+//wave
+let wave = document.querySelector('.wave');
+let wavCtx = wave.getContext("2d");
 
-var wave = document.querySelector('.wave');
-var spectro = document.querySelector('.spectro');
 //div
-var mainSection = document.querySelector('.main-controls');
-var soundClips = document.querySelector('.sound-clips');
+let mainSection = document.querySelector('.main-controls');
+let soundClips = document.querySelector('.sound-clips');
 // buttons
-var record = document.querySelector('.record');
-var stop = document.querySelector('.stop');
+let record = document.querySelector('.record');
+let stop = document.querySelector('.stop');
 //audio variables
-var audioContext, audioInput, analyser;
-//resampleRate, worker,
-var  bStream, client, recorder;
-// boolean
-var bRecording = false;
+let audioContext, wavContext, spContext;
+let audioInput, analyser;
 
-var session = {
+//resampleRate, worker,
+let  bStream, client, recorder;
+// boolean
+let bRecording = false;
+
+let spH, spW, sph, spx, DATA, LEN;
+
+let filename = '';
+
+let session = {
     audio: true,
     video: false
   };
@@ -32,14 +39,13 @@ var session = {
 
   function initializeRecorder(stream) {
     console.log('accessing microphone...');
-    var mediaRecorder = new MediaRecorder(stream);
+    let mediaRecorder = new MediaRecorder(stream);
     audioContext = new AudioContext();
+    let contextSampleRate = audioContext.sampleRate;
     
-    var contextSampleRate = audioContext.sampleRate;
         //resampleRate = contextSampleRate,
         //worker = new Worker('/assets/js/worker/resampler-worker.js');
         console.log(`Original sample rate:${contextSampleRate}`);
-
     // worker.postMessage({cmd:"init",from:contextSampleRate,to:resampleRate});
 
     // worker.addEventListener('message', function (e) {
@@ -49,10 +55,9 @@ var session = {
 
     audioInput = audioContext.createMediaStreamSource(stream);
     analyser = audioContext.createAnalyser();
-    var bufferSize = 2048;
-    // create a javascript node
+    let bufferSize = 1024;
+    // create a javascript no de
     recorder = audioContext.createScriptProcessor(bufferSize, 1, 1);
-
     analyser.smoothingTimeConstant = 0.3;
     analyser.fftSize = 1024;
 
@@ -71,6 +76,7 @@ var session = {
         if(mediaRecorder.state === 'recording'){
             mediaRecorder.stop;
         } 
+        filename= document.getElementById('filename').value;
         mediaRecorder.start();
         seconds = 40;
         record.disabled = true;
@@ -80,11 +86,12 @@ var session = {
         timer = setInterval(myTimer, 1000);
         client = new BinaryClient('wss://localhost:9001');
             client.on('open', function () {
-            bStream = client.createStream({sampleRate: contextSampleRate
+            bStream = client.createStream({sampleRate: contextSampleRate, fname: filename
             });
+            //console.log(bStream);
         });
         bRecording = true
-        
+
     }
 
     function myTimer() {
@@ -115,10 +122,7 @@ var session = {
 
   function recorderProcess(e) {
     canvas.width = mainSection.offsetWidth;
-    wave.width = mainSection.offsetWidth;
-    spectro.width=mainSection.offsetWidth;
-
-    var left = e.inputBuffer.getChannelData(0);
+    let left = e.inputBuffer.getChannelData(0);
 
     //worker.postMessage({cmd: "resample", buffer: left});
 
@@ -126,27 +130,63 @@ var session = {
     if(bRecording){
         console.log('Recording now...');
         if (bStream && bStream.writable){
+           // console.log(left);
             bStream.write(convertFloat32ToInt16(left));
         } 
     }
-    var bufferLength = analyser.frequencyBinCount;
-    var dataArray = new Uint8Array(analyser.frequencyBinCount);
+    let bufferLength = analyser.frequencyBinCount;
+    let dataArray = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(dataArray);
-    WIDTH = canvas.width;
-    HEIGHT = canvas.height;
+    let WIDTH = canvas.width;
+    let HEIGHT = canvas.height;
     canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-    canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-    var barWidth = (WIDTH / bufferLength)+2;
-    var barHeight;
-    var x = 0;
-    for (var i = 0; i < bufferLength; i++) {
+    
+    let barWidth = (WIDTH / bufferLength)+2;
+    let barHeight;
+    let x = 0;
+    for (let i = 0; i < bufferLength; i++) {
         barHeight = dataArray[i] /2;
         canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
         canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
 
         x += barWidth + 1;
     }
+   
+      drawWave(bufferLength, dataArray);
   }
+
+  function drawWave(bufferL, data){
+    wave.width = mainSection.offsetWidth;
+    let WIDTH = wave.width;
+    let HEIGHT = wave.height;
+    wavCtx.clearRect(0, 0, WIDTH, HEIGHT);
+    analyser.getByteTimeDomainData(data);
+    wavCtx.fillStyle = 'pink';
+    wavCtx.fillRect(0, 0, WIDTH, HEIGHT);
+    wavCtx.lineWidth = 2;
+    wavCtx.strokeStyle = 'rgb(0, 0, 0)';
+    wavCtx.beginPath();
+
+    let sliceWidth = WIDTH * 1.0 / bufferL;
+    let x = 0;
+
+    for(let i = 0; i < bufferL; i++) {
+   
+      let v = data[i] / 128.0;
+      let y = v * HEIGHT/2;
+
+      if(i === 0) {
+        wavCtx.moveTo(x, y);
+      } else {
+        wavCtx.lineTo(x, y);
+      }
+
+      x += sliceWidth;
+    }
+      wavCtx.lineTo(wave.width, wave.height/2);
+      wavCtx.stroke();
+  }
+
 
   function convertFloat32ToInt16(buffer) {
     l = buffer.length;
