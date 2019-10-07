@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TensorFlow.js Tutorial</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+        crossorigin="anonymous">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+</head>
+<body>
+    <main class="container" style="width:1000px; margin: auto;">
+            <div>
+                <h1 style="text-align: center; background-color: pink;">Raga Prediction with TensorflowJS</h1>
+                <h4 style="text-align: center; background-color:aliceblue; font-size: 0.9em;">Using fine-tuned models VGG16 and MobilNet</h4>
+                <hr>
+            </div>
+            <div class="row">
+                    <div class="col-12">
+                        <div class="progress progress-bar progress-bar-striped progress-bar-animated mb-2" style="display:none">Loading Model</div>
+                    </div>
+            </div>
+            <div class="row">
+                    <div class="col-3">
+                            <select id="select-model" class="custom-select">
+                                <option selected disabled>Select Model</option>
+                                <!-- <option>ConvNet</option> -->
+                                <option>MobilNet</option>
+                                <option>VGG16</option>
+                            </select>
+                        </div>
+                    <div class="col-5">
+                        <input id="image-selector" class="form-control border-0" type="file">
+                    </div>
+                    <div class="col-4">
+                        <button id="predict-button" class="btn btn-dark float-right">Predict</button>
+                    </div>
+                </div>
+            <div>  
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="ml-3">Image</h2>
+                        <img id="selected-image" class="ml-3" src="" />
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <h2 class="ml-3">Predictions</h2>
+                        <ol id="prediction-list"></ol>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+         <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script> -->  
+        <script src="/assets/js/image_names.js"></script>
+        <script src="/assets/js/predict.js"></script>
+</body>
+</html>

@@ -9,11 +9,21 @@
     "author": "SB",
     "license": "ISC",
     "dependencies": {
+        "@tensorflow/tfjs": "^1.2.9",
+        "@tensorflow/tfjs-node": "^1.2.9",
         "binaryjs": "^0.2.1",
         "chroma-js": "^2.0.4",
+        "esm": "^3.2.25",
         "express": "^4.16.4",
+        "ffmpeg": "^0.0.4",
         "opener": "^1.5.1",
         "socket.io-stream": "^0.9.1",
         "wav": "^1.0.2"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.6.2",
+        "@babel/core": "^7.6.2",
+        "@babel/preset-env": "^7.6.2",
+        "@babel/register": "^7.6.2"
     }
 }
