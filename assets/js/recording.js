@@ -55,11 +55,11 @@ let session = {
 
     audioInput = audioContext.createMediaStreamSource(stream);
     analyser = audioContext.createAnalyser();
-    let bufferSize = 1024;
+    let bufferSize = 4096;
     // create a javascript no de
     recorder = audioContext.createScriptProcessor(bufferSize, 1, 1);
     analyser.smoothingTimeConstant = 0.3;
-    analyser.fftSize = 1024;
+    analyser.fftSize = 4096;
 
     // specify the processing function
     recorder.onaudioprocess = recorderProcess;
